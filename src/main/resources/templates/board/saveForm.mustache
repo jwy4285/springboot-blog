@@ -1,0 +1,26 @@
+{{> /layout/header}}
+
+<div class="container p-5">
+    <!--요청을 하면 localhost:8080/board/save POST로 요청됨
+    title=사용자입력값&content=사용자입력값
+    action 엔드포인트-->
+    <div class="card">
+        <div class="card-header"><b>글쓰기 화면입니다</b></div>
+        <div class="card-body">
+            <form action="/board/save" method="post" enctype="application/x-www-form-urlencoded">
+                <div class="mb-3 mt-3">
+                    <input type="text" class="form-control" placeholder="Enter title" name="title">
+                </div>
+                <div class="mb-3">
+                    <textarea class="form-control" rows="5" name="comment" name="text"></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary">글쓰기완료</button>
+        </div>
+
+
+        </form>
+    </div>
+
+</div>
+
+{{> /layout/footer}}

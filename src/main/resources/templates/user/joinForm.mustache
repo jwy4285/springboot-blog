@@ -5,15 +5,19 @@
     <div class="card">
         <div class="card-header"><b>회원가입을 해주세요</b></div>
         <div class="card-body">
-            <form action="/join" method="post" enctype="application/x-www-form-urlencoded">
+            <form action="/join" method="post" enctype="application/x-www-form-urlencoded"><!--파싱하는거?폼 태그의 헤더-->
                 <div class="mb-3">
-                    <input type="text" class="form-control" placeholder="Enter username" name="username">
+                    <input type="text" class="form-control" placeholder="Enter username" name="username" required
+                        maxlength="20">
+                    <!--name은 키값 value는 사용자값-->
                 </div>
                 <div class="mb-3">
-                    <input type="password" class="form-control" placeholder="Enter password" name="password">
+                    <input type="password" class="form-control" placeholder="Enter password" name="password" required
+                        maxlength="20">
                 </div>
                 <div class="mb-3">
-                    <input type="email" class="form-control" placeholder="Enter email" name="email">
+                    <input type="email" class="form-control" placeholder="Enter email" name="email" required
+                        maxlength="20">
                 </div>
                 <button type="submit" class="btn btn-primary form-control">회원가입</button>
             </form>

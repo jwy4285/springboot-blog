@@ -4,9 +4,12 @@ import java.io.BufferedReader;
 import java.io.IOException;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -42,6 +45,16 @@ public class UserController {
 
     @Autowired
     private HttpSession session; // request는 가방 , session은 서랍 (다음번에 올때도 있음)
+
+    // localhost:8080/check?username=ssar
+    @GetMapping("/check") // 에이작스통신 데이터만 줘도됨 ,상태코드만줘도됨
+    public ResponseEntity<String> check(String username) {
+        User user = userRepositroy.findByUsername(username);
+        if (user != null) {
+            return new ResponseEntity<String>("유저네임이 중복 되었습니다", HttpStatus.BAD_REQUEST);
+        }
+        return new ResponseEntity<String>("유저네임을 사용할 수 있습니다", HttpStatus.OK);
+    } // 아까 리스폰스바디 붙였는데 리스폰스엔티티를 적어 놓은 순간 데이터를 받음 리스폰스바디 안받아도됨
 
     @ResponseBody
     @GetMapping("/test/login")
@@ -81,26 +94,23 @@ public class UserController {
     // 실무
     @PostMapping("/join")
     public String join(JoinDTO joinDTO) {
-
-        // validatuon check (유효성검사)
+        // validation check (유효성 검사)
         if (joinDTO.getUsername() == null || joinDTO.getUsername().isEmpty()) {
             return "redirect:/40x";
         }
-
         if (joinDTO.getPassword() == null || joinDTO.getPassword().isEmpty()) {
             return "redirect:/40x";
         }
-
         if (joinDTO.getEmail() == null || joinDTO.getEmail().isEmpty()) {
             return "redirect:/40x";
         }
-        try {
-            userRepositroy.save(joinDTO); // 핵심 기능
-        } catch (Exception e) {
+        // DB에 해당 username이 있는지 체크해보기 포스트맨으로 바로 털릴수있기때문에
+        User user = userRepositroy.findByUsername(joinDTO.getUsername());
+        if (user != null) {
             return "redirect:/50x";
         }
-
-        return ("redirect:/loginForm");
+        userRepositroy.save(joinDTO); // 핵심 기능
+        return "redirect:/loginForm";
     }
 
     // ip 주소 부여 : 10.5.9.200 -> mtcoding.com:8080
@@ -123,8 +133,6 @@ public class UserController {
     // 세션에 정보가 있어서 굳이 request를 쓸 필요가 없음
     public String updateForm() {
         // 1. 세션 정보를 가져와
-        User sessionUser = (User) session.getAttribute("sessionUser");
-
         return "user/updateForm"; // view를 찾는다.
     }
 

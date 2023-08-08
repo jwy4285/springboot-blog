@@ -1,16 +1,18 @@
 package shop.mtcoding.blog.repository;
 
 import java.math.BigInteger;
+import java.util.List;
 
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
 
-import org.hibernate.mapping.List;
+import org.qlrm.mapper.JpaResultMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import net.bytebuddy.implementation.bytecode.ByteCodeAppender.Size;
+import shop.mtcoding.blog.dto.BoardDetailDTO;
 import shop.mtcoding.blog.dto.JoinDTO;
 import shop.mtcoding.blog.dto.UpdateDTO;
 import shop.mtcoding.blog.dto.WriteDTO;
@@ -59,7 +61,40 @@ public class BoardRepository {
         query.executeUpdate();
     }
 
-    public Board findById(Integer id) {
+    public List<BoardDetailDTO> findByIdJoinReply(Integer boardId, Integer sessionUserId) {
+        String sql = "select ";
+        sql += "b.id board_id, ";
+        sql += "b.content board_content, ";
+        sql += "b.title board_title, ";
+        sql += "b.user_id board_user_id, ";
+        sql += "r.id reply_id, ";
+        sql += "r.comment reply_comment, ";
+        sql += "r.user_id reply_user_id, ";
+        sql += "ru.username reply_user_username, ";
+        if (sessionUserId == null) {
+            sql += "false reply_owner ";
+        } else {
+            sql += "case when r.user_id = :sessionUserId then true else false end reply_owner ";
+        }
+
+        sql += "from board_tb b left outer join reply_tb r ";
+        sql += "on b.id = r.board_id ";
+        sql += "left outer join user_tb ru ";
+        sql += "on r.user_id = ru.id ";
+        sql += "where b.id = :boardId ";
+        sql += "order by r.id desc";
+        Query query = em.createNativeQuery(sql);
+        query.setParameter("boardId", boardId);
+        if (sessionUserId != null) {
+            query.setParameter("sessionUserId", sessionUserId);
+        }
+
+        JpaResultMapper mapper = new JpaResultMapper();
+        List<BoardDetailDTO> dtos = mapper.list(query, BoardDetailDTO.class);
+        return dtos;
+    }
+
+    public Board findById(Integer id) { // 상세보기
         Query query = em.createNativeQuery("select * from board_tb where id = :id", Board.class);
         query.setParameter("id", id);
         Board board = (Board) query.getSingleResult();

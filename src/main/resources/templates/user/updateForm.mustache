@@ -10,15 +10,15 @@
             <form action="/user/update" method="post" enctype="application/x-www-form-urlencoded">
                 <div class="mb-3">
                     <input type="text" class="form-control" placeholder="Enter username" name="username"
-                        value="{{user.username}}" disabled> <!--input 태그의 disabled 속성은 해당 input 요소가 비활성화됨-->
+                        value="{{sessionUser.username}}" disabled> <!--input 태그의 disabled 속성은 해당 input 요소가 비활성화됨-->
                 </div>
                 <div class="mb-3">
                     <input type="password" class="form-control" placeholder="Enter password" name="password"
-                        value="{{user.password}}">
+                        value="{{sessionUser.password}}">
                 </div>
                 <div class="mb-3">
                     <input type="email" class="form-control" placeholder="Enter email" name="email"
-                        value="{{user.email}}" disabled>
+                        value="{{sessionUser.email}}" disabled>
                 </div>
                 <button type="submit" class="btn btn-primary form-control-lg">회원수정완료</button>
             </form>

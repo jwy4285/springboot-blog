@@ -39,7 +39,7 @@ public class ReplyController {
         // 댓글 쓰기
         replyRepository.save(replyWiriteDTO, sessionUser.getId());
 
-        return "redirect:/board/1";
+        return "redirect:/board/" + replyWiriteDTO.getBoardId();
     }
 
 }

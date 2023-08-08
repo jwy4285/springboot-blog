@@ -31,4 +31,5 @@ public class Board {
     // private Integer userId; 이렇게 해도되는데 클래스 쓰는게 더 편함
     @ManyToOne
     private User user;
+
 }

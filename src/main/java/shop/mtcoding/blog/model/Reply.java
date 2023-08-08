@@ -20,6 +20,7 @@ import lombok.Setter;
 @Table(name = "reply_tb")
 @Entity
 public class Reply {
+    // user 1 reply n
 
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
@@ -29,7 +30,7 @@ public class Reply {
     private String comment; // 댓글내용
 
     @JoinColumn(name = "user_id") // 조인컬럼하면 직접 만들수있음
-    @OneToOne
+    @ManyToOne
     private User user; // FK user_id 컬럼명 기본디폴트로 만들어짐
 
     @ManyToOne

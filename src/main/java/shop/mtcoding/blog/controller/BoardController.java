@@ -11,12 +11,16 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
+import shop.mtcoding.blog.dto.BoardDetailDTO;
 import shop.mtcoding.blog.dto.UpdateDTO;
 import shop.mtcoding.blog.dto.WriteDTO;
 import shop.mtcoding.blog.model.Board;
+import shop.mtcoding.blog.model.Reply;
 import shop.mtcoding.blog.model.User;
 import shop.mtcoding.blog.repository.BoardRepository;
+import shop.mtcoding.blog.repository.ReplyRepository;
 
 @Controller
 public class BoardController {
@@ -26,6 +30,23 @@ public class BoardController {
 
     @Autowired
     private BoardRepository boardRepository;
+    @Autowired
+    private ReplyRepository replyRepository;
+
+    @ResponseBody
+    @GetMapping("/test/reply")
+    public List<Reply> test2() {
+        List<Reply> replys = replyRepository.findByBoardId(1);
+        return replys;
+    }
+
+    @ResponseBody
+    @GetMapping("/test/board/1")
+
+    public Board test() {
+        Board board = boardRepository.findById(1);
+        return board;
+    }
 
     @PostMapping("/board/{id}/update") // 주소에 걸린건 웨얼에 걸림??
     public String update(@PathVariable Integer id, UpdateDTO updateDTO) { // DTO 약어 약어는 대문자로 포링키는 N
@@ -104,9 +125,6 @@ public class BoardController {
         }
         boolean last = totalPage - 1 == page;
 
-        System.out.println("테스트 : " + boardList.size());
-        System.out.println("테스트 : " + boardList.get(0).getTitle());
-
         request.setAttribute("boardList", boardList);
         request.setAttribute("prevPage", page - 1);
         request.setAttribute("nextPage", page + 1);
@@ -162,15 +180,20 @@ public class BoardController {
     // 외부에서 통신으로 메서드 때리게
     public String detail(@PathVariable Integer id, HttpServletRequest request) { // C 컨트롤러 역할
         User sessionUser = (User) session.getAttribute("sessionUser"); // 세션 접근
-        Board board = boardRepository.findById(id); // M MVC중에 모델의역할
+        List<BoardDetailDTO> dtos = null; // M MVC중에 모델의역할
+        if (sessionUser == null) {
+            dtos = boardRepository.findByIdJoinReply(id, null);
+        } else {
+            dtos = boardRepository.findByIdJoinReply(id, sessionUser.getId());
+        }
 
         boolean pageOwner = false;
         if (sessionUser != null) {
-            pageOwner = sessionUser.getId() == board.getUser().getId();
+            pageOwner = sessionUser.getId() == dtos.get(0).getBoardUserId();
 
         }
 
-        request.setAttribute("board", board);
+        request.setAttribute("dtos", dtos);
         request.setAttribute("pageOwner", pageOwner);
         return "board/detail"; // V view역할
     }

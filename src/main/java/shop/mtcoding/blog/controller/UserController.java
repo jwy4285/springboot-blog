@@ -133,6 +133,13 @@ public class UserController {
     // 세션에 정보가 있어서 굳이 request를 쓸 필요가 없음
     public String updateForm() {
         // 1. 세션 정보를 가져와
+
+        // 2. 인증검사
+        User sessionUser = (User) session.getAttribute("sessionUser");
+        if (sessionUser == null) {
+            return "redirect:/loginForm";
+        }
+
         return "user/updateForm"; // view를 찾는다.
     }
 

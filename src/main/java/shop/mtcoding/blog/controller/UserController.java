@@ -54,7 +54,7 @@ public class UserController {
             return new ResponseEntity<String>("유저네임이 중복 되었습니다", HttpStatus.BAD_REQUEST);
         }
         return new ResponseEntity<String>("유저네임을 사용할 수 있습니다", HttpStatus.OK);
-    } // 아까 리스폰스바디 붙였는데 리스폰스엔티티를 적어 놓은 순간 데이터를 받음 리스폰스바디 안받아도됨
+    } // 원래는 리스폰스바디 붙였는데 리스폰스엔티티를 적어 놓은 순간 데이터를 받음 리스폰스바디 안받아도됨
 
     @ResponseBody
     @GetMapping("/test/login")

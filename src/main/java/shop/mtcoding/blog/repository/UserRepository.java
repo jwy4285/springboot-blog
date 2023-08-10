@@ -61,7 +61,7 @@ public class UserRepository {
         Query query = em.createNativeQuery(
                 "update user_tb set password = :password where id = :id");
         String hashPwd = BCrypt.hashpw(userUpdateDTO.getPassword(), BCrypt.gensalt());
-        query.setParameter("password", hashPwd);
+        query.setParameter("gpassword", hashPwd);
         query.setParameter("id", id);
         query.executeUpdate();
     }

@@ -95,7 +95,7 @@ public class UserController {
 
                 return "redirect:/";
             } else {
-                return "redirect:/40x";
+                return "redirect:/loginForm";
             }
 
         } catch (Exception e) {
@@ -147,14 +147,15 @@ public class UserController {
     // http:localhost:8080/user/updateForm
     @GetMapping("/user/updateForm")
     // 세션에 정보가 있어서 굳이 request를 쓸 필요가 없음
-    public String updateForm() {
-        // 1. 세션 정보를 가져와
+    public String updateForm(HttpServletRequest request) {
 
-        // 2. 인증검사
         User sessionUser = (User) session.getAttribute("sessionUser");
         if (sessionUser == null) {
             return "redirect:/loginForm";
         } // 로그인되있는 상태에서 서버 닫으면 로그인 다시하게
+
+        User user = userRepositroy.findByUsername(sessionUser.getUsername());
+        request.setAttribute("user", user);
 
         return "user/updateForm"; // view를 찾는다.
     }

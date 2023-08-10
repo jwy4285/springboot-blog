@@ -108,16 +108,26 @@ public class BoardController {
     @GetMapping({ "/", "/board" }) // 주소 두개를 지정할때 ({})
     // 가방에 담음 HttpServletRequest request
     public String index(
+            @RequestParam(defaultValue = "") String keyword1,
             @RequestParam(defaultValue = "0") Integer page,
             HttpServletRequest request) {
         // 1. 유효성 검사 x 바디데이터가 없으면 유효성검사 안해도됨(GET 요청 , 프로토콜)
         // 2. 인증검사 x 게시글 목록보기는 로그인안해도 누구나 볼 수 있게 해줄려고
         // 게시글 목록보기니까 DB에서 값을 조회해서 가져와야한다
 
-        List<Board> boardList = boardRepository.findAll(page); // page = 1
-        int totalCount = boardRepository.count(); // totalCount = 5
+        List<Board> boardList = null;
+        int totalCount = 0;
+        if (keyword1 == null) {
+            boardList = boardRepository.findAll(page); // page = 1
+            totalCount = boardRepository.count();
+        } else {
+            boardList = boardRepository.findAll(page, keyword1);
+            totalCount = boardRepository.count(keyword1);
+            request.setAttribute("keyword", keyword1);
 
-        System.out.println("테스트 : totalcount :" + totalCount);
+        }
+
+        // System.out.println("테스트 : totalcount :" + totalCount);
         int totalPage = totalCount / 3; // totalPage = 1
         if (totalCount % 3 > 0) {
             totalPage = totalPage + 1; // totalPage = 2

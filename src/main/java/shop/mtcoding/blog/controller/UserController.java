@@ -7,6 +7,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.mindrot.jbcrypt.BCrypt;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,6 +19,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import shop.mtcoding.blog.dto.JoinDTO;
 import shop.mtcoding.blog.dto.LoginDTO;
+import shop.mtcoding.blog.dto.UpdateDTO;
+import shop.mtcoding.blog.dto.UserUpdateDTO;
 import shop.mtcoding.blog.model.User;
 import shop.mtcoding.blog.repository.UserRepository;
 
@@ -45,6 +48,13 @@ public class UserController {
 
     @Autowired
     private HttpSession session; // request는 가방 , session은 서랍 (다음번에 올때도 있음)
+
+    @PostMapping("/user/{id}/update")
+    public String update(@PathVariable Integer id, UserUpdateDTO userUpdateDTO) {
+        userRepositroy.update(userUpdateDTO, id);
+
+        return "redirect:/";
+    }
 
     // localhost:8080/check?username=ssar
     @GetMapping("/check") // 에이작스통신 데이터만 줘도됨 ,상태코드만줘도됨
@@ -79,10 +89,15 @@ public class UserController {
 
         // 핵심 기능
         try {
-            User user = userRepositroy.findByUsernameAndPassword(loginDTO);
-            session.setAttribute("sessionUser", user);
+            User user = userRepositroy.findByUsername(loginDTO.getUsername());
+            if (BCrypt.checkpw(loginDTO.getPassword(), user.getPassword())) {
+                session.setAttribute("sessionUser", user);
 
-            return "redirect:/";
+                return "redirect:/";
+            } else {
+                return "redirect:/40x";
+            }
+
         } catch (Exception e) {
             return "redirect:/exLogin";
         }
@@ -109,6 +124,7 @@ public class UserController {
         if (user != null) {
             return "redirect:/50x";
         }
+
         userRepositroy.save(joinDTO); // 핵심 기능
         return "redirect:/loginForm";
     }
@@ -138,7 +154,7 @@ public class UserController {
         User sessionUser = (User) session.getAttribute("sessionUser");
         if (sessionUser == null) {
             return "redirect:/loginForm";
-        }
+        } // 로그인되있는 상태에서 서버 닫으면 로그인 다시하게
 
         return "user/updateForm"; // view를 찾는다.
     }

@@ -43,7 +43,7 @@ public class BoardRepository {
     }
 
     // localhost:8080?page=0
-    public java.util.List<Board> findAll(int page) {
+    public List<Board> findAll(int page) {
         final int SIZE = 3; // 상수는 대문자
         Query query = em.createNativeQuery("select * from board_tb order by id desc limit :page, :size ", Board.class);
         query.setParameter("page", page * SIZE);
@@ -61,6 +61,7 @@ public class BoardRepository {
         query.executeUpdate();
     }
 
+    // 동적쿼리
     public List<BoardDetailDTO> findByIdJoinReply(Integer boardId, Integer sessionUserId) {
         String sql = "select ";
         sql += "b.id board_id, ";

@@ -98,7 +98,7 @@ public class BoardController {
         // boardRepository.deleteById(id); 호출하세요 ->리턴을 받지 마세요
         // delete from board_tb where id = :id
         boardRepository.deleteById(id);
-
+        System.out.println("테스트 1 ");
         return "redirect:/";
     }
 
@@ -176,11 +176,10 @@ public class BoardController {
 
     // localhost:8080/board/1
     // localhost:8080/board/50
-    @GetMapping("/board/{id}") // get요청이라 유효성검사 인증 필요없음
-    // 외부에서 통신으로 메서드 때리게
-    public String detail(@PathVariable Integer id, HttpServletRequest request) { // C 컨트롤러 역할
-        User sessionUser = (User) session.getAttribute("sessionUser"); // 세션 접근
-        List<BoardDetailDTO> dtos = null; // M MVC중에 모델의역할
+    @GetMapping("/board/{id}")
+    public String detail(@PathVariable Integer id, HttpServletRequest request) { // C
+        User sessionUser = (User) session.getAttribute("sessionUser"); // 세션접근
+        List<BoardDetailDTO> dtos = null;
         if (sessionUser == null) {
             dtos = boardRepository.findByIdJoinReply(id, null);
         } else {
@@ -190,11 +189,10 @@ public class BoardController {
         boolean pageOwner = false;
         if (sessionUser != null) {
             pageOwner = sessionUser.getId() == dtos.get(0).getBoardUserId();
-
         }
 
         request.setAttribute("dtos", dtos);
         request.setAttribute("pageOwner", pageOwner);
-        return "board/detail"; // V view역할
+        return "board/detail"; // V
     }
 }

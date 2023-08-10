@@ -1,10 +1,11 @@
 package shop.mtcoding.blog.repository;
 
+import java.util.List;
+
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
 import javax.transaction.Transactional;
 
-import org.hibernate.mapping.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -20,7 +21,13 @@ public class ReplyRepository {
     @Autowired
     private EntityManager em;
 
-    public java.util.List<Reply> findByBoardId(Integer boardId) {
+    public Reply findById(int id) {
+        Query query = em.createNativeQuery("select * from reply_tb where id = :id", Reply.class);
+        query.setParameter("id", id);
+        return (Reply) query.getSingleResult();
+    }
+
+    public List<Reply> findByBoardId(Integer boardId) {
         Query query = em.createNativeQuery(
                 "select * from reply_tb where board_id", Reply.class);
         query.setParameter("boarId", boardId);
@@ -38,5 +45,12 @@ public class ReplyRepository {
         // 쿼리전송
         query.executeUpdate();
 
+    }
+
+    @Transactional
+    public void deleteById(Integer id) {
+        Query query = em.createNativeQuery("delete from reply_tb where id = :id");
+        query.setParameter("id", id);
+        query.executeUpdate();
     }
 }

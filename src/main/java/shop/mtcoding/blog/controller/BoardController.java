@@ -108,7 +108,7 @@ public class BoardController {
     @GetMapping({ "/", "/board" }) // 주소 두개를 지정할때 ({})
     // 가방에 담음 HttpServletRequest request
     public String index(
-            @RequestParam(defaultValue = "") String keyword1,
+            String keyword1,
             @RequestParam(defaultValue = "0") Integer page,
             HttpServletRequest request) {
         // 1. 유효성 검사 x 바디데이터가 없으면 유효성검사 안해도됨(GET 요청 , 프로토콜)
@@ -139,7 +139,7 @@ public class BoardController {
         request.setAttribute("prevPage", page - 1);
         request.setAttribute("nextPage", page + 1);
         request.setAttribute("first", page == 0 ? true : false);
-        request.setAttribute("last", false);
+        request.setAttribute("last", last);
         request.setAttribute("totalPage", totalPage);
         request.setAttribute("totalCount", totalCount);
 
